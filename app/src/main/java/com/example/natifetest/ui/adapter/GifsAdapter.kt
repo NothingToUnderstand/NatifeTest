@@ -28,9 +28,8 @@ class GifsAdapter : PagingDataAdapter<Gif, GifsAdapter.GifsViewHolder>(Companion
     inner class GifsViewHolder(private val binding: LayoutRvItemGifBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(gif: Gif) {
-            Glide.with(binding.root)
+            Glide.with(binding.root.context)
                 .load(gif.url)
-                .fitCenter()
                 .placeholder(R.drawable.loading_placeholder_animated)
                 .error(R.drawable.no_image_placeholder)
                 .into(binding.gifIv)
