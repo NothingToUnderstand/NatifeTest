@@ -1,8 +1,13 @@
 package com.example.natifetest.utils.di
 
 import com.example.natifetest.BuildConfig
+import com.example.natifetest.data.model.Gif
+import com.example.natifetest.data.network.adapter.GifAdapter
 import com.example.natifetest.data.network.interceptor.AddApiKeyInterceptor
+import com.example.natifetest.data.repository.MainRepository
 import com.example.natifetest.data.repository.ProjectApi
+import com.example.natifetest.data.repository.pagination.GifsPagingSource
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,9 +47,9 @@ object NetworkModule {
         return Retrofit.Builder()
             .addConverterFactory(
                 GsonConverterFactory.create(
-//                    Gson().newBuilder()
-//                        .registerTypeAdapter(Posts::class.java, PostsAdapter())
-//                        .create()
+                    Gson().newBuilder()
+                        .registerTypeAdapter(Gif::class.java, GifAdapter())
+                        .create()
                 )
             )
             .baseUrl(BuildConfig.BASE_URL)
@@ -52,5 +57,4 @@ object NetworkModule {
             .build()
             .create(ProjectApi::class.java)
     }
-
 }

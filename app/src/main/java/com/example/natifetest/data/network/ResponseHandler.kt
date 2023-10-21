@@ -13,9 +13,9 @@ open class ResponseHandler {
     fun <T : Any> handleException(e: Exception): Status<out T> {
         Timber.tag("response handler exception").e(e.stackTraceToString())
          return when (e) {
-                is SocketTimeoutException -> Status.Error("Timeout")
-                is IOException -> Status.Error("No internet connection")
-                else -> Status.Error("Something went wrong")
+                is SocketTimeoutException -> Status.Error("Timeout",e)
+                is IOException -> Status.Error("No internet connection",e)
+                else -> Status.Error("Something went wrong",e)
             }
 
     }
