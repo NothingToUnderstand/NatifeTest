@@ -1,5 +1,16 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        maven {
+            url = uri("https://jitpack.io")
+        }
+        mavenCentral()
+    }
+}
 plugins {
-    id("com.android.application") version "8.1.2" apply false
-    id("org.jetbrains.kotlin.android") version "1.9.0" apply false
+    alias(libs.plugins.com.android.library) apply false
+    alias(libs.plugins.com.android.app) apply false
+    alias(libs.plugins.safe.args) apply false
+    alias(libs.plugins.kotlin) apply false
+    alias(libs.plugins.hilt) apply false
 }
