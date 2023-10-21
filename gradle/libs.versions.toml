@@ -14,9 +14,12 @@ espresso-core = "3.5.1"
 appcompat = "1.6.1"
 material = "1.10.0"
 giphy = "2.3.12"
-retrofit = "4.10.0"
+retrofit = "2.9.0"
+interceptor = "4.10.0"
 gson = "2.10.1"
-pagin = "3.2.0"
+pagin = "3.2.1"
+timber = "5.0.1"
+spalsh = "1.1.0-alpha02"
 
 
 
@@ -49,10 +52,13 @@ navigation-runtime = { group = "androidx.navigation", name = "navigation-runtime
 
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 gson-converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "retrofit" }
+interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "interceptor" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 pagin = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "pagin" }
 
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+
+splash = { group = "androidx.core", name = "core-splashscreen", version.ref = "spalsh" }
 
 #declare plugins here
 [plugins]

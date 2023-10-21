@@ -51,6 +51,8 @@ android {
 
     dependencies {
         implementation(libs.giphy)
+        implementation(libs.timber)
+        implementation(libs.splash)
 
         implementation(libs.hilt.android)
         kapt(libs.hilt.kapt)
