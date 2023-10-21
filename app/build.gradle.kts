@@ -31,6 +31,7 @@ android {
         }
         all {
             buildConfigField("String", "API_KEY", "\"Hq94HY8gP3jBq9aO7pamwIs2P2qp7Pms\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.giphy.com/v1/gifs/\"")
         }
     }
         compileOptions {
@@ -50,17 +51,14 @@ android {
     }
 
     dependencies {
-        implementation(libs.giphy)
         implementation(libs.timber)
         implementation(libs.splash)
-
+        implementation(libs.glide)
         implementation(libs.hilt.android)
         kapt(libs.hilt.kapt)
-
         implementation(libs.bundles.lifecycle)
         implementation(libs.bundles.navigation)
         implementation(libs.bundles.network)
-
 
         implementation(libs.core.ktx)
         implementation(libs.appcompat)
