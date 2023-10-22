@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.filter
 import androidx.paging.map
+import com.example.natifetest.data.database.AppDatabase
 import com.example.natifetest.data.database.mapper.gifFromEntity
 import com.example.natifetest.data.repository.LocalRepository
 import com.example.natifetest.data.repository.RemoteRepository
@@ -16,14 +17,15 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GifsUseCase @Inject constructor(
-    private val gifRemoteMediator: GifRemoteMediator,
+    private val remoteRepository: RemoteRepository,
     private val localRepository: LocalRepository,
-    private val sharedPrefHelper: SharedPrefHelper
+    private val appDataBase: AppDatabase,
+    private val sharedPrefHelper: SharedPrefHelper,
 ) {
     @OptIn(ExperimentalPagingApi::class)
-    fun getGifs() = Pager(
-        config = PagingConfig(25, initialLoadSize = 25),
-        remoteMediator = gifRemoteMediator,
+    fun getGifs(search: String?) = Pager(
+        config = PagingConfig(PAGE_SIZE, initialLoadSize = PAGE_SIZE),
+        remoteMediator = GifRemoteMediator(remoteRepository, localRepository, appDataBase, search),
         pagingSourceFactory = { localRepository.getPagedGifs() }
     ).flow.map { pagingData ->
         pagingData.map {
@@ -31,6 +33,10 @@ class GifsUseCase @Inject constructor(
         }.filter {
             sharedPrefHelper.deletedIds?.contains(it.id)?.not() ?: true
         }
+    }
+
+    companion object{
+        private const val PAGE_SIZE = 25
     }
 
 }

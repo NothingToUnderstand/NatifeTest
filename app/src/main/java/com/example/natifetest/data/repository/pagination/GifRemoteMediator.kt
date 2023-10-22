@@ -11,13 +11,13 @@ import com.example.natifetest.data.network.Status
 import com.example.natifetest.data.repository.LocalRepository
 import com.example.natifetest.data.repository.RemoteRepository
 import timber.log.Timber
-import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class GifRemoteMediator @Inject constructor(
+class GifRemoteMediator(
     private val remoteRepository: RemoteRepository,
     private val localRepository: LocalRepository,
-    private val appDataBase: AppDatabase
+    private val appDataBase: AppDatabase,
+    private val search: String?
 ) : RemoteMediator<Int, GifEntity>() {
 
     private var offset = 1
@@ -32,7 +32,14 @@ class GifRemoteMediator @Inject constructor(
             LoadType.APPEND -> offset
         }
         Timber.d("Loading page $page")
-        return when (val response = remoteRepository.getGifsInTrends(state.config.pageSize, page)) {
+
+        val response = search
+            ?.takeIf { it.isEmpty().not() }
+            ?.let { remoteRepository.searchGifs(search, state.config.pageSize, page) }
+            ?: remoteRepository.getGifsInTrends(state.config.pageSize, page)
+
+
+        return when (response) {
             is Status.Success -> {
                 response.data.data?.let {
                     appDataBase.withTransaction {

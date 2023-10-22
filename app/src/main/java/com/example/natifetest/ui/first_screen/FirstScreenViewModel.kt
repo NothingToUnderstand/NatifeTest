@@ -23,9 +23,9 @@ class FirstScreenViewModel @Inject constructor(
 
     private val _gifs = MutableStateFlow<PagingData<Gif>?>(null)
     val gifs = _gifs.asStateFlow()
-    fun getGifs() {
+    fun getGifs(search: String? = null) {
         viewModelScope.launch {
-            gifsUseCase.getGifs().cachedIn(viewModelScope).collect {
+            gifsUseCase.getGifs(search).cachedIn(viewModelScope).collect {
                 _gifs.value = it
             }
         }

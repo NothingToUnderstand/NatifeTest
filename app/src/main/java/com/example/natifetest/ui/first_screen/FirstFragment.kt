@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ import com.example.natifetest.ui.adapter.FooterLoadStateAdapter
 import com.example.natifetest.ui.adapter.GifsAdapter
 import com.example.natifetest.ui.base.BaseFragment
 import com.example.natifetest.utils.delegates.viewBinding
+import com.example.natifetest.utils.extensions.hideSoftKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,13 +38,8 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
         super.onViewCreated(view, savedInstanceState)
         Timber.i("First started")
         observeViewModel()
+        bindView()
         viewModel.getGifs()
-
-        val footer = FooterLoadStateAdapter()
-        binding.gifsRecyclerview.adapter = adapter.withLoadStateFooter(footer)
-        binding.swiperefresh.setOnRefreshListener {
-            adapter.refresh()
-        }
 
         adapter.addLoadStateListener {
             if (it.refresh is LoadState.Error) {
@@ -58,6 +55,25 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
         }
     }
 
+    private fun bindView() = with(binding) {
+        gifsRecyclerview.adapter = adapter.withLoadStateFooter(FooterLoadStateAdapter())
+        swiperefresh.setOnRefreshListener {
+            adapter.refresh()
+            gifsRecyclerview.layoutManager?.scrollToPosition(0)
+        }
+        search.apply {
+            setOnFocusChangeListener { _, focus ->
+                if (!focus) {
+                    hideSoftKeyboard(this)
+                }
+            }
+            doAfterTextChanged {
+                viewModel.getGifs(it.toString())
+                gifsRecyclerview.layoutManager?.scrollToPosition(0)
+            }
+        }
+    }
+
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -69,6 +85,4 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
             }
         }
     }
-
-
 }
