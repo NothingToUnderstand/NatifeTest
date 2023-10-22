@@ -21,6 +21,7 @@ timber = "5.0.1"
 spalsh = "1.1.0-alpha02"
 glide = "4.16.0"
 room = "2.6.0"
+swipe-to-refresh = "1.2.0-alpha01"
 
 
 #declare libraries here
@@ -68,6 +69,7 @@ room-common = { group = "androidx.room", name = "room-common", version.ref = "ro
 room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 room-kapt = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
+swipe-to-refresh = {group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipe-to-refresh"}
 #declare plugins here
 [plugins]
 

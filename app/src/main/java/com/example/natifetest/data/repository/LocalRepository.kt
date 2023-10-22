@@ -8,4 +8,5 @@ interface LocalRepository {
     suspend fun upsert(gif: Gif)
     suspend fun upsertAll(gifs: List<Gif>)
     fun getPagedGifs(): PagingSource<Int, GifEntity>
+    suspend fun drop()
 }

@@ -7,7 +7,6 @@ fun gifToEntity(gif: Gif): GifEntity {
     return GifEntity(
         gif.id,
         gif.url,
-        gif.isDeleted
     )
 }
 
@@ -15,6 +14,5 @@ fun gifFromEntity(gifEntity: GifEntity): Gif {
     return Gif(
         gifEntity.id,
         gifEntity.url,
-        gifEntity.deleted
     )
 }

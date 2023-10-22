@@ -9,15 +9,11 @@ import javax.inject.Inject
 class LocalRepositoryImpl @Inject constructor(
     private val dao: GifsDao
 ) : LocalRepository {
-    override suspend fun upsert(gif: Gif) {
-        dao.upsert(gifToEntity(gif))
-    }
+    override suspend fun upsert(gif: Gif) = dao.upsert(gifToEntity(gif))
 
-    override suspend fun upsertAll(gifs: List<Gif>) {
-        dao.upsertAll(gifs.map { gifToEntity(it) })
-    }
+    override suspend fun upsertAll(gifs: List<Gif>) = dao.upsertAll(gifs.map { gifToEntity(it) })
 
-    override  fun getPagedGifs() = dao.getPaging()
-
+    override fun getPagedGifs() = dao.getPaging()
+    override suspend fun drop() = dao.drop()
 
 }

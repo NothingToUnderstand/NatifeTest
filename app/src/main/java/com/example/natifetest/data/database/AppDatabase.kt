@@ -7,7 +7,7 @@ import com.example.natifetest.data.database.entity.GifEntity
 
 @Database(
     entities = [GifEntity::class],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun gifsDao(): GifsDao

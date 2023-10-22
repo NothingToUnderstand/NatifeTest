@@ -55,6 +55,8 @@ android {
         implementation(libs.splash)
         implementation(libs.glide)
         implementation(libs.hilt.android)
+        implementation(libs.swipe.to.refresh)
+
         implementation(libs.bundles.lifecycle)
         implementation(libs.bundles.navigation)
         implementation(libs.bundles.network)

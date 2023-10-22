@@ -8,7 +8,6 @@ data class GifEntity(
     @PrimaryKey
     val id:String,
     val url:String,
-    val deleted:Boolean
 ){
     companion object {
         const val TABLE_NAME = "GifEntity"
