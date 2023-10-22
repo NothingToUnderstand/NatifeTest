@@ -1,8 +1,11 @@
 package com.example.natifetest.ui.adapter
 
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.PopupMenu
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -12,9 +15,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.natifetest.R
 import com.example.natifetest.data.model.Gif
 import com.example.natifetest.databinding.LayoutRvItemGifBinding
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.drawable.ScalingUtils
+import com.facebook.imagepipeline.listener.RequestListener
+import com.facebook.imagepipeline.request.ImageRequest
 
 class GifsAdapter(
-    private val onDelete: (gifId: String) -> Unit
+    private val onDelete: (gifId: String, forever: Boolean) -> Unit
 ) : PagingDataAdapter<Gif, GifsAdapter.GifsViewHolder>(Companion) {
     companion object : DiffUtil.ItemCallback<Gif>() {
         override fun areItemsTheSame(
@@ -33,15 +40,20 @@ class GifsAdapter(
     inner class GifsViewHolder(private val binding: LayoutRvItemGifBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(gif: Gif) {
+
             binding.optionsBtn.setOnClickListener {
                 showMenu(gif.id, binding.optionsBtn)
             }
-            Glide.with(binding.root.context)
-                .load(gif.url)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.loading_placeholder_animated)
-                .error(R.drawable.no_image_placeholder)
-                .into(binding.gifIv)
+            val imageRequest = ImageRequest.fromUri(Uri.parse(gif.url))
+            binding.gifIv.apply {
+                controller = Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(imageRequest)
+                    .setAutoPlayAnimations(true)
+                    .build()
+                hierarchy.actualImageScaleType = ScalingUtils.ScaleType.FIT_CENTER
+                hierarchy.setProgressBarImage(R.drawable.loading_placeholder_animated)
+                hierarchy.setFailureImage(R.drawable.no_image_placeholder)
+            }
         }
     }
 
@@ -60,7 +72,7 @@ class GifsAdapter(
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.action_delete -> {
-                        onDelete.invoke(gifId)
+                        onDelete.invoke(gifId, true)
                         true
                     }
 

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +25,7 @@ class FirstScreenViewModel @Inject constructor(
     private val _gifs = MutableStateFlow<PagingData<Gif>?>(null)
     val gifs = _gifs.asStateFlow()
     fun getGifs(search: String? = null) {
+        Timber.d("Get gifs $search")
         viewModelScope.launch {
             gifsUseCase.getGifs(search).cachedIn(viewModelScope).collect {
                 _gifs.value = it
@@ -31,8 +33,11 @@ class FirstScreenViewModel @Inject constructor(
         }
     }
 
-    fun deleteGif(gifId: String) {
-        sharedPrefHelper.addToSetDeletedIds(gifId)
+    fun deleteGif(gifId: String,forever:Boolean) {
+        Timber.d("Gif deleted")
+        if (forever){
+            sharedPrefHelper.addToSetDeletedIds(gifId)
+        }
         _gifs.update {
             it?.filter { gif ->
                 gif.id != gifId

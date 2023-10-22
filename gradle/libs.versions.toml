@@ -22,6 +22,7 @@ spalsh = "1.1.0-alpha02"
 glide = "4.16.0"
 room = "2.6.0"
 swipe-to-refresh = "1.2.0-alpha01"
+fresco = "3.1.0"
 
 
 #declare libraries here
@@ -62,6 +63,8 @@ splash = { group = "androidx.core", name = "core-splashscreen", version.ref = "s
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-kapt = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 
+fresco = { group = "com.facebook.fresco", name = "fresco", version.ref = "fresco" }
+fresco-gif = { group = "com.facebook.fresco", name = "animated-gif", version.ref = "fresco" }
 
 room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -88,4 +91,5 @@ lifecycle = ["lc-runtime", "lc-common", "lc-vm", "lc-livedata"]
 navigation = ["navigation-common", "navigation-fragment", "navigation-runtime"]
 network = ["retrofit", "gson-converter", "interceptor", "gson", "pagin"]
 room = ["room", "room-ktx", "room-common", "room-paging"]
+fresco = ["fresco", "fresco-gif"]
 

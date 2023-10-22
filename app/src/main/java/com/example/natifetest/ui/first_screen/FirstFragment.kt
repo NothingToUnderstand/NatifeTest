@@ -30,27 +30,23 @@ import timber.log.Timber
 class FirstFragment : BaseFragment(R.layout.fragment_first) {
     private val binding by viewBinding(::bind)
     private val viewModel: FirstScreenViewModel by viewModels()
-    private val adapter = GifsAdapter {
-        viewModel.deleteGif(it)
+    private val adapter = GifsAdapter {id,forever->
+        viewModel.deleteGif(id,forever)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.i("First started")
+        Timber.d("First started")
         observeViewModel()
         bindView()
         viewModel.getGifs()
 
         adapter.addLoadStateListener {
             if (it.refresh is LoadState.Error) {
-                Toast.makeText(
-                    requireContext(),
-                    (it.refresh as LoadState.Error).error.message
-                        ?: getString(R.string.something_went_wrong),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Timber.d((it.refresh as LoadState.Error).error.message ?: getString(R.string.something_went_wrong))
+                Toast.makeText(requireContext(), (it.refresh as LoadState.Error).error.message
+                        ?: getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
             }
-
             binding.swiperefresh.isRefreshing = it.refresh is LoadState.Loading
         }
     }
@@ -58,6 +54,7 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
     private fun bindView() = with(binding) {
         gifsRecyclerview.adapter = adapter.withLoadStateFooter(FooterLoadStateAdapter())
         swiperefresh.setOnRefreshListener {
+            Timber.d("Refresh")
             adapter.refresh()
             gifsRecyclerview.layoutManager?.scrollToPosition(0)
         }
@@ -68,6 +65,7 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
                 }
             }
             doAfterTextChanged {
+                Timber.d("Search $it")
                 viewModel.getGifs(it.toString())
                 gifsRecyclerview.layoutManager?.scrollToPosition(0)
             }
@@ -79,7 +77,7 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.gifs.collectLatest {
                     it ?: return@collectLatest
-                    Timber.i("data success")
+                    Timber.d("Data success")
                     adapter.submitData(it)
                 }
             }

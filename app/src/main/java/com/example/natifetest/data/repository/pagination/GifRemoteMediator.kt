@@ -10,6 +10,7 @@ import com.example.natifetest.data.database.entity.GifEntity
 import com.example.natifetest.data.network.Status
 import com.example.natifetest.data.repository.LocalRepository
 import com.example.natifetest.data.repository.RemoteRepository
+import com.facebook.drawee.backends.pipeline.Fresco
 import timber.log.Timber
 
 @OptIn(ExperimentalPagingApi::class)
@@ -38,6 +39,8 @@ class GifRemoteMediator(
             ?.let { remoteRepository.searchGifs(search, state.config.pageSize, page) }
             ?: remoteRepository.getGifsInTrends(state.config.pageSize, page)
 
+        Timber.d("Response $response")
+
 
         return when (response) {
             is Status.Success -> {
@@ -45,6 +48,7 @@ class GifRemoteMediator(
                     appDataBase.withTransaction {
                         if (loadType == LoadType.REFRESH) {
                             localRepository.drop()
+                            Fresco.getImagePipeline().clearCaches()
                         }
                         localRepository.upsertAll(it)
                     }
