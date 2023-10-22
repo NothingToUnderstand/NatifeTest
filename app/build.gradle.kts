@@ -55,10 +55,14 @@ android {
         implementation(libs.splash)
         implementation(libs.glide)
         implementation(libs.hilt.android)
-        kapt(libs.hilt.kapt)
         implementation(libs.bundles.lifecycle)
         implementation(libs.bundles.navigation)
         implementation(libs.bundles.network)
+        implementation(libs.bundles.room)
+
+        kapt(libs.hilt.kapt)
+        kapt(libs.glide.kapt)
+        kapt(libs.room.kapt)
 
         implementation(libs.core.ktx)
         implementation(libs.appcompat)

@@ -4,9 +4,7 @@ import com.example.natifetest.BuildConfig
 import com.example.natifetest.data.model.Gif
 import com.example.natifetest.data.network.adapter.GifAdapter
 import com.example.natifetest.data.network.interceptor.AddApiKeyInterceptor
-import com.example.natifetest.data.repository.MainRepository
 import com.example.natifetest.data.repository.ProjectApi
-import com.example.natifetest.data.repository.pagination.GifsPagingSource
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides

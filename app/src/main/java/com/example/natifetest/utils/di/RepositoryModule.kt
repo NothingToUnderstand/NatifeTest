@@ -1,7 +1,9 @@
 package com.example.natifetest.utils.di
 
-import com.example.natifetest.data.repository.MainRepository
-import com.example.natifetest.data.repository.impl.MainRepositoryImpl
+import com.example.natifetest.data.repository.LocalRepository
+import com.example.natifetest.data.repository.RemoteRepository
+import com.example.natifetest.data.repository.impl.LocalRepositoryImpl
+import com.example.natifetest.data.repository.impl.RemoteRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,7 +15,14 @@ import javax.inject.Singleton
 interface RepositoryModule {
     @Binds
     @Singleton
-    fun bindMainRepository(
-        mainRepositoryImpl: MainRepositoryImpl
-    ): MainRepository
+    fun bindRemoteRepository(
+        remoteRepositoryImpl: RemoteRepositoryImpl
+    ): RemoteRepository
+
+    @Binds
+    @Singleton
+    fun bindLocalRepository(
+        localRepositoryImpl: LocalRepositoryImpl
+    ): LocalRepository
+
 }

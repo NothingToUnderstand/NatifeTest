@@ -20,7 +20,7 @@ pagin = "3.2.1"
 timber = "5.0.1"
 spalsh = "1.1.0-alpha02"
 glide = "4.16.0"
-
+room = "2.6.0"
 
 
 #declare libraries here
@@ -59,6 +59,14 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 splash = { group = "androidx.core", name = "core-splashscreen", version.ref = "spalsh" }
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-kapt = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+
+
+room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-common = { group = "androidx.room", name = "room-common", version.ref = "room" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
+room-kapt = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 #declare plugins here
 [plugins]
@@ -73,7 +81,9 @@ safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigat
 
 #declare bundles here
 [bundles]
+
 lifecycle = ["lc-runtime", "lc-common", "lc-vm", "lc-livedata"]
 navigation = ["navigation-common", "navigation-fragment", "navigation-runtime"]
 network = ["retrofit", "gson-converter", "interceptor", "gson", "pagin"]
+room = ["room", "room-ktx", "room-common", "room-paging"]
 

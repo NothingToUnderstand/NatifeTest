@@ -1,19 +1,39 @@
 package com.example.natifetest.domain.usecase
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.example.natifetest.data.repository.MainRepository
+import androidx.paging.map
+import com.example.natifetest.data.database.mapper.gifFromEntity
+import com.example.natifetest.data.repository.LocalRepository
+import com.example.natifetest.data.repository.RemoteRepository
+import com.example.natifetest.data.repository.pagination.GifRemoteMediator
 import com.example.natifetest.data.repository.pagination.GifsPagingSource
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GifsUseCase @Inject constructor(
-    private val mainRepository: MainRepository
+    private val remoteRepository: RemoteRepository,
+    private val localRepository: LocalRepository
 ) {
+    //    fun getGifs() = Pager(
+//        config = PagingConfig(10, initialLoadSize = 10),
+//        pagingSourceFactory = {
+//            GifsPagingSource(remoteRepository)
+//        }
+//    ).flow
+    @OptIn(ExperimentalPagingApi::class)
     fun getGifs() = Pager(
         config = PagingConfig(10, initialLoadSize = 10),
-        pagingSourceFactory = {
-            GifsPagingSource(mainRepository)
+        remoteMediator = GifRemoteMediator(
+            remoteRepository,
+            localRepository
+        ),
+        pagingSourceFactory = { localRepository.getPagedGifs() }
+    ).flow.map { pagingData ->
+        pagingData.map {
+            gifFromEntity(it)
         }
-    ).flow
+    }
 
 }
