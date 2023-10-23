@@ -12,15 +12,15 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 
-typealias Inflate<T> = (View) -> T
+typealias Bind<T> = (View) -> T
 
-fun <T : ViewBinding> Fragment.viewBinding(inflate: Inflate<T>) =
-    ViewBindingDelegate(this, inflate)
+fun <T : ViewBinding> Fragment.viewBinding(bind: Bind<T>) =
+    ViewBindingDelegate(this, bind)
 
 
 class ViewBindingDelegate<T : ViewBinding>(
     val fragment: Fragment,
-    private val inflate: Inflate<T>
+    private val bind: Bind<T>
 ) : ReadOnlyProperty<Fragment, T> {
     private var binding: T? = null
 
@@ -62,7 +62,7 @@ class ViewBindingDelegate<T : ViewBinding>(
             throw ex
         }
 
-        return inflate.invoke(thisRef.requireView()).also { this.binding = it }
+        return bind.invoke(thisRef.requireView()).also { this.binding = it }
     }
 
 }

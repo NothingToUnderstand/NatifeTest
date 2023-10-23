@@ -9,5 +9,21 @@
         android:id="@+id/firstFragment"
         android:name="com.example.natifetest.ui.first_screen.FirstFragment"
         android:label="FirstFragment"
-        tools:layout="@layout/fragment_first"/>
+        tools:layout="@layout/fragment_first">
+        <action
+            android:id="@+id/to_secondFragment"
+            app:destination="@id/secondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/secondFragment"
+        android:name="com.example.natifetest.ui.second_screen.SecondFragment"
+        android:label="SecondFragment"
+        tools:layout="@layout/fragment_second">
+        <argument
+            android:name="position"
+            app:argType="integer" />
+        <argument
+            android:name="search"
+            app:argType="string" />
+    </fragment>
 </navigation>
