@@ -4,4 +4,5 @@
     <string name="no_internet_connection">No internet connection</string>
     <string name="delete">Delete</string>
     <string name="search">search</string>
+    <string name="no_gifs_try_to_search">No gifs, try to search</string>
 </resources>

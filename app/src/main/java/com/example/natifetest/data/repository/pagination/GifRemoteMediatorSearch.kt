@@ -10,37 +10,35 @@ import com.example.natifetest.data.database.entity.GifEntity
 import com.example.natifetest.data.network.Status
 import com.example.natifetest.data.repository.LocalRepository
 import com.example.natifetest.data.repository.RemoteRepository
-import com.facebook.drawee.backends.pipeline.Fresco
 import timber.log.Timber
 
 @OptIn(ExperimentalPagingApi::class)
-class GifRemoteMediator(
+class GifRemoteMediatorSearch(
     private val remoteRepository: RemoteRepository,
     private val localRepository: LocalRepository,
     private val appDataBase: AppDatabase,
-    private val search: String?
+    private val search: String
 ) : RemoteMediator<Int, GifEntity>() {
 
-    private var offset = 1
+    private var offset = 0
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, GifEntity>
     ): MediatorResult {
 
-        val page = when (loadType) {
-            LoadType.REFRESH -> 1
+        val offset = when (loadType) {
+            LoadType.REFRESH -> 0
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
             LoadType.APPEND -> offset
-        }
-        Timber.d("Loading page $page")
 
-        val response = search
-            ?.takeIf { it.isEmpty().not() }
-            ?.let { remoteRepository.searchGifs(search, state.config.pageSize, page) }
-            ?: remoteRepository.getGifsInTrends(state.config.pageSize, page)
+        }
+        Timber.d("Loading offset $offset")
+
+        val response = if (search.isEmpty().not()) {
+            remoteRepository.searchGifs(search, state.config.pageSize, offset)
+        } else return MediatorResult.Success(endOfPaginationReached = true)
 
         Timber.d("Response $response")
-
 
         return when (response) {
             is Status.Success -> {
@@ -48,15 +46,17 @@ class GifRemoteMediator(
                     appDataBase.withTransaction {
                         if (loadType == LoadType.REFRESH) {
                             localRepository.drop()
-                            Fresco.getImagePipeline().clearCaches()
                         }
                         localRepository.upsertAll(it)
+
                     }
                 }
                 val pagination = response.data.pagination
-                offset = pagination.offset + 1
+                pagination?.offset?.plus(state.config.pageSize)?.let {
+                    this.offset = it
+                }
                 MediatorResult.Success(
-                    endOfPaginationReached = (pagination.offset * pagination.count) > pagination.totalCount
+                    endOfPaginationReached = pagination != null && pagination.offset >= pagination.totalCount
                 )
             }
 

@@ -21,13 +21,12 @@ class FirstScreenViewHolder(
         binding.optionsBtn.setOnClickListener {
             showMenu(model.id, binding.optionsBtn)
         }
-        val imageRequest = ImageRequest.fromUri(Uri.parse(model.url))
         binding.gifIv.apply {
             setOnClickListener {
                 onGifClick.invoke(bindingAdapterPosition)
             }
             controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(imageRequest)
+                .setImageRequest(ImageRequest.fromUri(Uri.parse(model.url)))
                 .setAutoPlayAnimations(true)
                 .build()
             hierarchy.actualImageScaleType = ScalingUtils.ScaleType.FIT_CENTER

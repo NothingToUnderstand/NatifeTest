@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -23,12 +24,15 @@ import com.example.natifetest.ui.adapter.diffutil.GifsDiffUtilItemsCallBack
 import com.example.natifetest.ui.adapter.viewholders.FirstScreenViewHolder
 import com.example.natifetest.ui.base.BaseFragment
 import com.example.natifetest.utils.delegates.viewBinding
+import com.example.natifetest.utils.extensions.disabled
+import com.example.natifetest.utils.extensions.enabled
 import com.example.natifetest.utils.extensions.hideSoftKeyboard
 import com.example.natifetest.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+
 
 @AndroidEntryPoint
 class FirstFragment : BaseFragment(R.layout.fragment_first) {
@@ -43,7 +47,12 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
                 viewModel.deleteGif(id, forever)
             },
             {
-                navigate(FirstFragmentDirections.toSecondFragment(it))
+                navigate(
+                    FirstFragmentDirections.toSecondFragment(
+                        it,
+                        binding.search.text?.toString() ?: ""
+                    )
+                )
             }
         )
     }
@@ -53,19 +62,26 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("First started")
         observeViewModel()
+        viewModel.getGifsSearch("")
         bindView()
-        viewModel.getGifs()
 
         adapter.addLoadStateListener {
             if (it.refresh is LoadState.Error) {
-                Timber.d((it.refresh as LoadState.Error).error.message ?: getString(R.string.something_went_wrong))
-                showToast((it.refresh as LoadState.Error).error.message ?: getString(R.string.something_went_wrong))
+                Timber.d(
+                    (it.refresh as LoadState.Error).error.message
+                        ?: getString(R.string.something_went_wrong)
+                )
+                showToast(
+                    (it.refresh as LoadState.Error).error.message
+                        ?: getString(R.string.something_went_wrong)
+                )
             }
             binding.swiperefresh.isRefreshing = it.refresh is LoadState.Loading
         }
     }
 
     private fun bindView() = with(binding) {
+        binding.swiperefresh.isEnabled = false
         gifsRecyclerview.adapter = adapter.withLoadStateFooter(FooterLoadStateAdapter())
         swiperefresh.setOnRefreshListener {
             Timber.d("Refresh")
@@ -80,7 +96,7 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
             }
             doAfterTextChanged {
                 Timber.d("Search $it")
-                viewModel.getGifs(it.toString())
+                viewModel.getGifsSearch(it.toString())
                 gifsRecyclerview.layoutManager?.scrollToPosition(0)
             }
         }
@@ -90,6 +106,8 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.gifs.collectLatest {
+                    binding.noData.root.isVisible = it == null || adapter.itemCount == 0
+                    binding.swiperefresh.isEnabled = it != null && adapter.itemCount > 0
                     it ?: return@collectLatest
                     Timber.d("Data success")
                     adapter.submitData(it)
