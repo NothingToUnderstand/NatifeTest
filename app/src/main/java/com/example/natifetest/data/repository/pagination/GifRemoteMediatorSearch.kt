@@ -21,10 +21,12 @@ class GifRemoteMediatorSearch(
 ) : RemoteMediator<Int, GifEntity>() {
 
     private var offset = 0
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, GifEntity>
     ): MediatorResult {
+
 
         val offset = when (loadType) {
             LoadType.REFRESH -> 0
@@ -48,7 +50,6 @@ class GifRemoteMediatorSearch(
                             localRepository.drop()
                         }
                         localRepository.upsertAll(it)
-
                     }
                 }
                 val pagination = response.data.pagination
