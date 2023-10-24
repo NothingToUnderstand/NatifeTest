@@ -61,7 +61,6 @@ android {
         implementation(libs.bundles.navigation)
         implementation(libs.bundles.network)
         implementation(libs.bundles.room)
-        implementation(libs.bundles.fresco)
 
         kapt(libs.hilt.kapt)
         kapt(libs.glide.kapt)

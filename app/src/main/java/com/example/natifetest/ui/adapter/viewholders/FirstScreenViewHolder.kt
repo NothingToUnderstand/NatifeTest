@@ -1,15 +1,18 @@
 package com.example.natifetest.ui.adapter.viewholders
 
-import android.net.Uri
+import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.natifetest.R
 import com.example.natifetest.data.model.Gif
 import com.example.natifetest.databinding.LayoutRvItemGifBinding
 import com.example.natifetest.ui.base.BaseViewHolder
-import com.facebook.drawee.backends.pipeline.Fresco
-import com.facebook.drawee.drawable.ScalingUtils
-import com.facebook.imagepipeline.request.ImageRequest
+
 
 class FirstScreenViewHolder(
     private val binding: LayoutRvItemGifBinding,
@@ -21,17 +24,35 @@ class FirstScreenViewHolder(
         binding.optionsBtn.setOnClickListener {
             showMenu(model.id, binding.optionsBtn)
         }
-        binding.gifIv.apply {
-            setOnClickListener {
-                onGifClick.invoke(bindingAdapterPosition)
-            }
-            controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(ImageRequest.fromUri(Uri.parse(model.url)))
-                .setAutoPlayAnimations(true)
-                .build()
-            hierarchy.actualImageScaleType = ScalingUtils.ScaleType.FIT_CENTER
-            hierarchy.setProgressBarImage(R.drawable.loading_placeholder_animated)
-            hierarchy.setFailureImage(R.drawable.no_image_placeholder)
+
+        Glide.with(binding.root.context)
+            .load(model.url)
+            .centerCrop()
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    m: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onDelete.invoke(model.id, false)
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ) = false
+
+            })
+            .placeholder(R.drawable.loading_placeholder_animated)
+            .into(binding.gifIv)
+
+        binding.gifIv.setOnClickListener {
+            onGifClick.invoke(bindingAdapterPosition)
         }
     }
 

@@ -3,10 +3,12 @@ package com.example.natifetest.ui.first_screen
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -62,6 +64,7 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("First started")
         observeViewModel()
+        observeAdapter()
         viewModel.getGifsSearch("")
         bindView()
 
@@ -80,13 +83,23 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
         }
     }
 
+    private fun observeAdapter() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                adapter.loadStateFlow.collectLatest { state ->
+                    binding.noData.root.isVisible = adapter.itemCount == 0
+                    binding.swiperefresh.isEnabled = adapter.itemCount > 0
+                }
+            }
+        }
+    }
+
     private fun bindView() = with(binding) {
         binding.swiperefresh.isEnabled = false
         gifsRecyclerview.adapter = adapter.withLoadStateFooter(FooterLoadStateAdapter())
         swiperefresh.setOnRefreshListener {
             Timber.d("Refresh")
             adapter.refresh()
-            gifsRecyclerview.layoutManager?.scrollToPosition(0)
         }
         search.apply {
             setOnFocusChangeListener { _, focus ->
@@ -97,7 +110,6 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
             doAfterTextChanged {
                 Timber.d("Search $it")
                 viewModel.getGifsSearch(it.toString())
-                gifsRecyclerview.layoutManager?.scrollToPosition(0)
             }
         }
     }
@@ -105,12 +117,9 @@ class FirstFragment : BaseFragment(R.layout.fragment_first) {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.gifs.collectLatest {
-                    binding.noData.root.isVisible = it == null || adapter.itemCount == 0
-                    binding.swiperefresh.isEnabled = it != null && adapter.itemCount > 0
-                    it ?: return@collectLatest
+                viewModel.gifs.collectLatest { data ->
                     Timber.d("Data success")
-                    adapter.submitData(it)
+                    data?.let { adapter.submitData(it) }
                 }
             }
         }

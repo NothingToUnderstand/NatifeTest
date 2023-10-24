@@ -11,8 +11,10 @@ import com.example.natifetest.domain.usecase.GifsUseCase
 import com.example.natifetest.utils.helpers.SharedPrefHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
@@ -30,12 +32,12 @@ class FirstScreenViewModel @Inject constructor(
     val gifs = _gifs.asStateFlow()
     private var searchJob: Job? = null
 
-
     fun getGifsSearch(search: String) {
         Timber.d("Get gifs $search")
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            gifsUseCase.getGifsSearch(search).cachedIn(viewModelScope).collectLatest {
+            delay(500)
+            gifsUseCase.getGifsSearch(search).cachedIn(viewModelScope).collect {
                 _gifs.value = it
             }
         }
